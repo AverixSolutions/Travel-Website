@@ -1,26 +1,92 @@
 @import "tailwindcss";
 
+/* ================================
+   AZURE COAST — minimal tokens
+   ================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand & accents */
+  --brand: #0ba5e6; /* azure */
+  --brand-foreground: #ffffff;
+  --accent: #ff8a5b; /* peach */
+  --accent-foreground: #0b1220;
+  --accent-2: #ffe29a; /* sand */
+  --accent-3: #22d3ee; /* aqua */
+
+  /* Surfaces & text */
+  --background: #fdfcf8; /* warm off-white */
+  --foreground: #0b1220; /* deep slate */
+  --muted: #f1f5f9; /* slate-100 */
+  --border: #e6e8f0; /* subtle line */
+  --card: #ffffff;
+  --card-foreground: #0b1220;
+
+  color-scheme: light;
 }
 
+/* Expose to Tailwind (enables text-foreground, border-border, bg-card, etc.) */
 @theme inline {
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-2: var(--accent-2);
+  --color-accent-3: var(--accent-3);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base */
+html,
+body {
+  height: 100%;
 }
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, Segoe UI,
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+    "Segoe UI Emoji";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth anchor scroll + offset for sticky navbar */
+html:focus-within {
+  scroll-behavior: smooth;
+}
+[id] {
+  scroll-margin-top: 96px;
+}
+
+/* Hide horizontal scrollbar cross-browser */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Containers */
+.container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  max-width: 1350px;
+}
+.nav-container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  max-width: 1200px;
 }
