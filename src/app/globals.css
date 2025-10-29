@@ -1,30 +1,32 @@
 @import "tailwindcss";
 
 /* ================================
-   AZURE COAST — minimal tokens
+   MYSHA TOURS & TRAVELS THEME
    ================================ */
 
 :root {
   /* Brand & accents */
-  --brand: #0ba5e6; /* azure */
+  --brand: #3e2a79; /* deep royal purple */
   --brand-foreground: #ffffff;
-  --accent: #ff8a5b; /* peach */
-  --accent-foreground: #0b1220;
-  --accent-2: #ffe29a; /* sand */
-  --accent-3: #22d3ee; /* aqua */
+
+  --accent: #e8b122; /* golden yellow */
+  --accent-foreground: #1a1625;
+
+  --accent-2: #f8e6a0; /* pale gold highlight */
+  --accent-3: #6b5fa6; /* soft lavender secondary */
 
   /* Surfaces & text */
-  --background: #fdfcf8; /* warm off-white */
-  --foreground: #0b1220; /* deep slate */
-  --muted: #f1f5f9; /* slate-100 */
-  --border: #e6e8f0; /* subtle line */
+  --background: #faf9f7; /* warm off-white */
+  --foreground: #1a1625; /* near-black text */
+  --muted: #f2f0f6; /* subtle lilac-gray */
+  --border: #e5e3ec;
   --card: #ffffff;
-  --card-foreground: #0b1220;
+  --card-foreground: #1a1625;
 
   color-scheme: light;
 }
 
-/* Expose to Tailwind (enables text-foreground, border-border, bg-card, etc.) */
+/* Expose to Tailwind */
 @theme inline {
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);

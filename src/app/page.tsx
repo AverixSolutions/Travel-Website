@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFab from "@/components/WhatsAppFab";
 import PackagesPreview from "@/components/sections/PackagesPreview";
 import ServicesOverview from "@/components/sections/ServicesOverview";
+import AboutTeaser from "@/components/sections/AboutTeaser";
 
 export default function Mainpage() {
   return (
@@ -14,6 +15,7 @@ export default function Mainpage() {
         <HeroVideo />
         <PackagesPreview />
         <ServicesOverview />
+        <AboutTeaser />
       </main>
       <Footer />
       <WhatsAppFab />

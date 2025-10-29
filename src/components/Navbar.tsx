@@ -2,6 +2,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { Menu, X } from "lucide-react";
 
 const links = [
   { href: "#home", label: "Home" },
@@ -39,7 +41,6 @@ export default function Navbar() {
             : "bg-card/95 border border-border shadow-lg ring-1 ring-black/5 rounded-2xl",
         ].join(" ")}
       >
-        {/* Nav container with proper padding */}
         <nav
           className={[
             "flex items-center justify-between transition-colors duration-200",
@@ -47,27 +48,21 @@ export default function Navbar() {
             isScrolling ? "text-white" : "text-foreground",
           ].join(" ")}
         >
-          {/* Brand (always solid brand chip) */}
           <Link
             href="#home"
-            className="flex items-center gap-2 font-semibold tracking-tight"
-            aria-label="TravelCo Home"
+            className="flex items-center gap-3 shrink-0"
+            aria-label="Mysha Tours Home"
           >
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-brand text-white">
-              <svg
-                viewBox="0 0 24 24"
-                className="h-4.5 w-4.5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M10.5 7.5l-7 7 2 2 7-7 7.5 2.5-3-8-6.5 3.5z" />
-                <path d="M3.5 14.5l6 1" />
-              </svg>
-            </span>
-            <span>
-              <span className="text-brand">Travel</span>Co
-            </span>
+            <div className="relative h-10 w-[140px] flex items-center">
+              <Image
+                src="/MYSHA-LOGO.png"
+                alt="Mysha Tours & Travels"
+                fill
+                priority
+                className="object-contain"
+                sizes="(max-width: 768px) 120px, 140px"
+              />
+            </div>
           </Link>
 
           {/* Desktop nav */}
@@ -90,18 +85,16 @@ export default function Navbar() {
               </li>
             ))}
             <li>
-              {/* Enquire  */}
               <a
                 href="#contact"
-                className="inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm font-medium
-                           text-white bg-brand hover:brightness-95 transition"
+                className="inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm font-medium text-white bg-brand hover:brightness-95 transition"
               >
                 Enquire
               </a>
             </li>
           </ul>
 
-          {/* Mobile burger button */}
+          {/* ✅ Mobile burger button using Lucide */}
           <button
             className={[
               "inline-flex h-10 w-10 items-center justify-center rounded-lg border md:hidden transition",
@@ -118,15 +111,7 @@ export default function Navbar() {
             aria-label="Toggle menu"
             type="button"
           >
-            <svg
-              viewBox="0 0 24 24"
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </nav>
 
@@ -162,11 +147,9 @@ export default function Navbar() {
               </li>
             ))}
             <li className="px-2 pt-2">
-              {/* Enquire button */}
               <a
                 href="#contact"
-                className="inline-flex w-full items-center justify-center rounded-xl px-5 py-3 text-sm font-medium
-                           text-white bg-brand hover:brightness-95 transition"
+                className="inline-flex w-full items-center justify-center rounded-xl px-5 py-3 text-sm font-medium text-white bg-brand hover:brightness-95 transition"
                 onClick={() => setOpen(false)}
               >
                 Enquire
