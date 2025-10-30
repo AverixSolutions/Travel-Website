@@ -6,6 +6,8 @@ import WhatsAppFab from "@/components/WhatsAppFab";
 import PackagesPreview from "@/components/sections/PackagesPreview";
 import ServicesOverview from "@/components/sections/ServicesOverview";
 import AboutTeaser from "@/components/sections/AboutTeaser";
+import WhyChooseUs from "@/components/sections/WhyChooseUs";
+import TestimonialsMarquee from "@/components/sections/TestimonialsMarquee";
 
 export default function Mainpage() {
   return (
@@ -16,6 +18,8 @@ export default function Mainpage() {
         <PackagesPreview />
         <ServicesOverview />
         <AboutTeaser />
+        <WhyChooseUs />
+        <TestimonialsMarquee />
       </main>
       <Footer />
       <WhatsAppFab />

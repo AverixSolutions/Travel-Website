@@ -22,7 +22,7 @@ export default function HeroVideo() {
   }, []);
 
   return (
-    <section id="home" className="relative isolate pt-[88px] md:pt-[96px]">
+    <section id="home" className="relative isolate pt-[60px] md:pt-[96px]">
       {/* Background video */}
       <video
         ref={videoRef}

@@ -3,7 +3,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Route, Stamp, Users, Headset } from "lucide-react";
+import { Route, Stamp, Users, Headset, ArrowRight } from "lucide-react";
 
 export default function ServicesOverview() {
   const items = [
@@ -40,73 +40,58 @@ export default function ServicesOverview() {
   return (
     <section
       id="services"
-      className="relative isolate w-full py-14 md:py-20 lg:py-24"
+      className="relative isolate w-full py-8 md:py-14"
       aria-label="Services overview"
     >
-      {/* Full-bleed background with gentle wash & vignette */}
+      {/* Background */}
       <div className="absolute inset-0 -z-10">
         <Image
           src="/paper-texture.jpg"
           alt=""
           fill
           priority={false}
-          className="object-cover"
+          className="object-cover opacity-40 md:opacity-60"
         />
-        <div className="absolute inset-0 bg-white/70 md:bg-white/60" />
-        <div className="pointer-events-none absolute inset-0 [background:radial-gradient(1200px_420px_at_85%_-10%,rgba(0,0,0,0.05)_0%,transparent_60%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/70 to-white/85" />
       </div>
 
-      <div className="container">
+      <div className="container px-4">
         {/* Heading */}
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs md:text-sm font-semibold uppercase tracking-[0.18em] text-[var(--accent-3)]">
-            What we do
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-3)] sm:text-sm">
+            WHAT WE DO
           </p>
-          <h2 className="mt-2 text-[28px]/[1.2] md:text-4xl font-extrabold tracking-tight text-foreground">
-            Travel made <span className="text-brand">effortless</span>
+          <h2 className="mt-2 text-[32px]/[1.15] font-black tracking-tight text-foreground sm:text-4xl md:text-5xl">
+            Travel made{" "}
+            <span className="bg-gradient-to-r from-brand to-[color-mix(in_lab,var(--brand)_80%,var(--accent))] bg-clip-text text-transparent">
+              effortless
+            </span>
           </h2>
-          <p className="mt-3 text-sm md:text-base text-foreground/70">
+          <p className="mt-4 text-sm leading-relaxed text-foreground/70 sm:text-base">
             From planning and visas to on-ground support—everything designed to
             keep your trip smooth and memorable.
           </p>
         </div>
 
         {/* Cards */}
-        <div className="mt-10 grid grid-cols-1 gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
           {items.map(({ icon: Icon, title, points, description }, idx) => (
             <article
               key={idx}
-              className="
-                group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-card
-                shadow-sm ring-1 ring-black/0 transition
-                motion-safe:duration-300 hover:shadow-md hover:ring-black/5
-                focus-within:shadow-md focus-within:ring-black/5
-              "
+              className="group relative overflow-hidden rounded-2xl border border-[var(--border)]/60 bg-gradient-to-br from-white to-[color-mix(in_lab,var(--card)_98%,var(--brand))] shadow-lg ring-1 ring-black/5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:ring-brand/20"
             >
+              {/* Gradient overlay */}
+              <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br from-brand/10 to-[var(--accent-3)]/10 blur-2xl transition-transform duration-500 group-hover:scale-150" />
+
               {/* Body */}
               <div className="relative p-5 md:p-6">
-                {/* corner glow */}
-                <div
-                  className="
-                    pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full opacity-25
-                    bg-[radial-gradient(circle_at_30%_30%,color-mix(in_lab,var(--brand)_55%,white),transparent_60%)]
-                  "
-                />
                 <div className="relative">
-                  {/* Icon pill */}
-                  <div
-                    className="
-                      inline-flex h-12 w-12 items-center justify-center rounded-xl text-white
-                      shadow-sm motion-safe:transition-transform motion-safe:duration-300
-                      bg-[linear-gradient(135deg,var(--brand),var(--accent-3))]
-                      group-hover:scale-110
-                    "
-                    aria-hidden
-                  >
-                    <Icon className="h-6 w-6" />
+                  {/* Icon */}
+                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-[var(--accent-3)] text-white shadow-md shadow-brand/20 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-brand/30">
+                    <Icon className="h-5 w-5" />
                   </div>
 
-                  <h3 className="mt-4 text-base md:text-lg font-semibold text-foreground">
+                  <h3 className="mt-4 text-lg font-bold text-foreground md:text-xl">
                     {title}
                   </h3>
 
@@ -114,36 +99,16 @@ export default function ServicesOverview() {
                   <ul className="mt-3 space-y-2 text-sm text-foreground/75">
                     {points.map((p, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="mt-1 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-                        <span>{p}</span>
+                        <span className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-r from-brand to-[var(--accent-3)]" />
+                        <span className="leading-relaxed">{p}</span>
                       </li>
                     ))}
                   </ul>
 
-                  {/* Mobile-first: inline description (visible on <md) */}
-                  <p className="mt-3 text-sm text-foreground/75 md:hidden">
+                  {/* Always visible description */}
+                  <p className="mt-4 text-sm leading-relaxed text-foreground/70 border-t border-[var(--border)]/50 pt-4">
                     {description}
                   </p>
-                </div>
-              </div>
-
-              {/* md+ hover reveal panel */}
-              <div
-                className="
-                  pointer-events-none absolute inset-0 hidden items-end md:flex
-                  opacity-0 motion-safe:transition-all motion-safe:duration-300
-                  group-hover:opacity-100
-                "
-                aria-hidden
-              >
-                <div
-                  className="
-                    m-4 w-[calc(100%-2rem)] translate-y-2 rounded-xl border border-[var(--border)]
-                    bg-white/90 p-4 text-sm text-foreground/80 shadow-sm backdrop-blur-sm
-                    motion-safe:transition-transform motion-safe:duration-300 group-hover:translate-y-0
-                  "
-                >
-                  {description}
                 </div>
               </div>
             </article>
@@ -151,26 +116,17 @@ export default function ServicesOverview() {
         </div>
 
         {/* CTAs */}
-        <div className="mt-10 md:mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <div className="mt-10 flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-center md:mt-12">
           <Link
             href="/services"
-            className="
-              inline-flex items-center justify-center rounded-xl border border-brand
-              px-5 py-2.5 md:px-6 md:py-3 text-sm font-semibold text-brand
-              transition hover:bg-[color-mix(in_lab,var(--brand)_10%,white)]
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40
-            "
+            className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-brand bg-white px-6 py-3.5 text-sm font-bold text-brand shadow-sm transition-all hover:bg-brand hover:text-white hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 sm:w-auto"
           >
             Explore all services
+            <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             href="#contact"
-            className="
-              inline-flex items-center justify-center rounded-xl bg-brand
-              px-5 py-2.5 md:px-6 md:py-3 text-sm font-semibold text-white
-              transition hover:brightness-95
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40
-            "
+            className="flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-brand to-[color-mix(in_lab,var(--brand)_90%,black)] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-brand/25 transition-all hover:shadow-xl hover:shadow-brand/30 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 sm:w-auto"
           >
             Talk to us
           </Link>

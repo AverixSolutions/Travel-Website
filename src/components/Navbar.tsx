@@ -32,10 +32,10 @@ export default function Navbar() {
   }, [isScrolling]);
 
   return (
-    <header className="fixed inset-x-0 top-4 z-50">
+    <header className="fixed inset-x-0 top-4 z-50 px-3 md:px-0">
       <div
         className={[
-          "mx-auto w-full max-w-[1400px] px-4 md:px-4 transition-all duration-200",
+          "mx-auto w-full max-w-[1400px] px-2 md:px-4 transition-all duration-200",
           isScrolling
             ? "bg-white/12 border border-white/25 rounded-2xl backdrop-blur-xl"
             : "bg-card/95 border border-border shadow-lg ring-1 ring-black/5 rounded-2xl",
@@ -44,7 +44,7 @@ export default function Navbar() {
         <nav
           className={[
             "flex items-center justify-between transition-colors duration-200",
-            "py-3 md:py-3",
+            "py-2 md:py-3 mt-3 md:mt-0 pr-3 md:pr-0",
             isScrolling ? "text-white" : "text-foreground",
           ].join(" ")}
         >
@@ -94,7 +94,7 @@ export default function Navbar() {
             </li>
           </ul>
 
-          {/* ✅ Mobile burger button using Lucide */}
+          {/* ✅ Mobile burger button */}
           <button
             className={[
               "inline-flex h-10 w-10 items-center justify-center rounded-lg border md:hidden transition",
