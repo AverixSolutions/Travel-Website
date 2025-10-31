@@ -53,9 +53,9 @@ export default function WhyChooseUs() {
               </h2>
 
               <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/85 sm:text-base">
-                We don't sell trips—we craft stories you'll keep. From visa help
-                to curated stays and 24×7 assistance, every detail is handled so
-                you can simply show up and enjoy the journey.
+                We don&apos;t sell trips—we craft stories you&apos;ll keep. From
+                visa help to curated stays and 24×7 assistance, every detail is
+                handled so you can simply show up and enjoy the journey.
               </p>
 
               {/* feature badges */}
@@ -95,13 +95,13 @@ export default function WhyChooseUs() {
               {/* CTA */}
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <Link
-                  href="#packages"
+                  href="/packages"
                   className="inline-flex items-center justify-center rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-[var(--accent-foreground)] shadow-lg shadow-black/20 transition hover:brightness-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
                 >
                   Explore Packages <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
                 <Link
-                  href="#contact"
+                  href="/contact"
                   className="inline-flex items-center justify-center rounded-xl border-2 border-white/70 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
                 >
                   Talk to an Expert

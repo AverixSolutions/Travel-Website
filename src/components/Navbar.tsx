@@ -6,11 +6,10 @@ import Image from "next/image";
 import { Menu, X } from "lucide-react";
 
 const links = [
-  { href: "#home", label: "Home" },
-  { href: "#packages", label: "Packages" },
-  { href: "#services", label: "Services" },
-  { href: "#about", label: "About us" },
-  { href: "#contact", label: "Contact" },
+  { href: "/", label: "Home" },
+  { href: "/packages", label: "Packages" },
+  { href: "/services", label: "Services" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function Navbar() {
@@ -49,7 +48,7 @@ export default function Navbar() {
           ].join(" ")}
         >
           <Link
-            href="#home"
+            href="/"
             className="flex items-center gap-3 shrink-0"
             aria-label="Mysha Tours Home"
           >
@@ -86,7 +85,7 @@ export default function Navbar() {
             ))}
             <li>
               <a
-                href="#contact"
+                href="/contact"
                 className="inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm font-medium text-white bg-brand hover:brightness-95 transition"
               >
                 Enquire
@@ -148,7 +147,7 @@ export default function Navbar() {
             ))}
             <li className="px-2 pt-2">
               <a
-                href="#contact"
+                href="/contact"
                 className="inline-flex w-full items-center justify-center rounded-xl px-5 py-3 text-sm font-medium text-white bg-brand hover:brightness-95 transition"
                 onClick={() => setOpen(false)}
               >

@@ -125,7 +125,7 @@ export default function ServicesOverview() {
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
-            href="#contact"
+            href="/contact"
             className="flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-brand to-[color-mix(in_lab,var(--brand)_90%,black)] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-brand/25 transition-all hover:shadow-xl hover:shadow-brand/30 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 sm:w-auto"
           >
             Talk to us

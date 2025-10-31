@@ -202,7 +202,7 @@ export default function PackagesPreview() {
                           </span>
                         </div>
                         <a
-                          href={`/packages/${pkg.id}`}
+                          href={`/packages`}
                           className="inline-flex items-center justify-center gap-1.5 rounded-xl border-2 border-brand bg-white px-5 py-2.5 text-xs font-bold text-brand transition-all hover:bg-brand hover:text-white hover:scale-105"
                         >
                           Details

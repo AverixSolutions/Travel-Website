@@ -11,7 +11,6 @@ type T = {
   avatar?: string;
 };
 
-// demo data — swap with real ones
 const ROW1: T[] = [
   {
     name: "Aisha K.",
@@ -111,9 +110,8 @@ function Card({ t }: { t: T }) {
     <div className="group/card relative mx-2 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md md:mx-3 md:p-5">
       <div className="flex items-center gap-3">
         <div className="h-9 w-9 overflow-hidden rounded-full ring-2 ring-gray-300">
-          {/* avatar fallback gradient if missing */}
+          {/* avatar fallback gradient */}
           {t.avatar ? (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={t.avatar}
               alt={t.name}
@@ -137,7 +135,7 @@ function Card({ t }: { t: T }) {
       </div>
 
       <p className="mt-3 line-clamp-2 text-sm text-gray-700 md:line-clamp-3">
-        "{t.quote}"
+        &quot;{t.quote}&quot;
       </p>
     </div>
   );
@@ -154,34 +152,26 @@ function Track({
 }) {
   return (
     <div className="relative overflow-hidden">
-      {/* the moving rail (duplicated for seamless loop) */}
       <div
         className={[
-          "marquee flex w-max min-w-full select-none gap-2 py-2 [animation-iteration-count:infinite] [animation-timing-function:linear]",
+          "marquee flex w-max min-w-full select-none gap-1.5 sm:gap-2 py-1.5 sm:py-2 [animation-iteration-count:infinite] [animation-timing-function:linear]",
           reverse ? "marquee-rtl" : "marquee-ltr",
-          // pause on hover (desktop)
           "group/rail hover:[animation-play-state:paused]",
-          // speed
-          `[${reverse ? "--dur-rtl" : "--dur-ltr"}:${duration}s]`, // custom property just to document duration per row
+          `[${reverse ? "--dur-rtl" : "--dur-ltr"}:${duration}s]`,
         ].join(" ")}
-        style={
-          {
-            animationDuration: `${duration}s`,
-          } as React.CSSProperties
-        }
+        style={{ animationDuration: `${duration}s` } as React.CSSProperties}
       >
         {[...items, ...items].map((t, i) => (
           <Card key={i} t={t} />
         ))}
       </div>
 
-      {/* foggy edges */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[var(--background)] to-transparent md:w-16" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[var(--background)] to-transparent md:w-16" />
+      {/* foggy edges (narrower on mobile) */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-8 sm:w-12 bg-gradient-to-r from-[var(--background)] to-transparent md:w-16" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-8 sm:w-12 bg-gradient-to-l from-[var(--background)] to-transparent md:w-16" />
     </div>
   );
 }
-
 export default function TestimonialsMarquee() {
   return (
     <section
@@ -209,14 +199,14 @@ export default function TestimonialsMarquee() {
           </p>
         </div>
 
-        {/* rail wrapper (gives pause-on-hover to both) */}
+        {/* rail wrapper */}
         <div className="group/rail mt-8 space-y-3 md:mt-10">
           <Track items={ROW1} reverse={false} duration={38} />
           <Track items={ROW2} reverse duration={34} />
         </div>
 
-        {/* brand panel for contrast */}
-        <div className="mt-10 rounded-3xl bg-brand/5 p-4 ring-1 ring-border/60 md:p-6">
+        {/* brand panel*/}
+        <div className="mt-10 rounded-3xl bg-brand/5 p-4 ring-1 ring-border/60 md:p-4">
           <p className="text-center text-sm text-gray-700">
             2,000+ travellers rated us{" "}
             <span className="font-semibold text-gray-900">4.9/5</span> for
