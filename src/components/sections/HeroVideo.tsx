@@ -53,7 +53,7 @@ export default function HeroVideo() {
                      [background:linear-gradient(180deg,rgba(255,255,255,.20),rgba(255,255,255,.08))]"
         >
           {/* Kicker */}
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[var(--accent-3)] md:text-sm">
+          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-accent md:text-sm">
             <MapPinned className="h-4 w-4" />
             Crafted Getaways
           </p>
