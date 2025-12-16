@@ -15,13 +15,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://your-domain.com"),
+  metadataBase: new URL("https://myshatravels.com"),
   title: {
-    default: "TravelCo – Curated Travel Packages & Seamless Trips",
-    template: "%s | TravelCo",
+    default: "Mysha Travels – Curated Travel Packages & Seamless Trips",
+    template: "%s | Mysha Travels",
   },
   description:
-    "Discover handpicked travel packages, custom itineraries, visa help, and 24×7 support. Plan your next adventure with TravelCo.",
+    "Discover handpicked travel packages, custom itineraries, visa help, and 24×7 support. Plan your next adventure with Mysha Travels.",
   keywords: [
     "travel packages",
     "custom itineraries",
@@ -32,8 +32,8 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Krishna Kumar P S" }],
   creator: "Krishna Kumar P S",
-  publisher: "TravelCo",
-  applicationName: "TravelCo",
+  publisher: "Mysha Travels",
+  applicationName: "Mysha Travels",
   category: "Travel",
   alternates: { canonical: "/" },
   robots: {
@@ -49,9 +49,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    siteName: "TravelCo",
-    url: "https://your-domain.com/",
-    title: "TravelCo – Curated Travel Packages & Seamless Trips",
+    siteName: "Mysha Travels",
+    url: "https://myshatravels.com/",
+    title: "Mysha Travels – Curated Travel Packages & Seamless Trips",
     description:
       "Handpicked packages, flexible services, and honest guidance—so you can just enjoy the trip.",
     images: [
@@ -59,14 +59,14 @@ export const metadata: Metadata = {
         url: "/og.jpg",
         width: 1200,
         height: 630,
-        alt: "TravelCo – Curated Travel Packages & Seamless Trips",
+        alt: "Mysha Travels – Curated Travel Packages & Seamless Trips",
       },
     ],
     locale: "en_IN",
   },
   twitter: {
     card: "summary_large_image",
-    title: "TravelCo – Curated Travel Packages & Seamless Trips",
+    title: "Mysha Travels – Curated Travel Packages & Seamless Trips",
     description:
       "Handpicked packages, flexible services, and honest guidance—so you can just enjoy the trip.",
     images: ["/og.jpg"],
@@ -91,9 +91,9 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "TravelAgency",
-    name: "TravelCo",
-    url: "https://your-domain.com/",
-    logo: "https://your-domain.com/icon-512.png",
+    name: "Mysha Travels",
+    url: "https://myshatravels.com/",
+    logo: "https://myshatravels.com/icon-512.png",
     sameAs: [
       "https://facebook.com/yourpage",
       "https://www.instagram.com/yourpage",

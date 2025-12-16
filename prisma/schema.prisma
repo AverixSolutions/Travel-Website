@@ -1,0 +1,53 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Package {
+  id         String          @id @default(cuid())
+  slug       String          @unique
+  title      String
+  location   String
+  days       Int
+  nights     Int
+  price      Int
+  currency   String          @default("INR")
+  category   PackageCategory
+  highlights String[]
+  isActive   Boolean         @default(true)
+
+  coverImageUrl String?
+  gallery       PackageImage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category, isActive])
+  @@index([createdAt])
+}
+
+model PackageImage {
+  id        String  @id @default(cuid())
+  packageId String
+  url       String
+  publicId  String?
+  sortOrder Int     @default(0)
+
+  package Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([packageId, sortOrder])
+}
+
+enum PackageCategory {
+  international
+  domestic
+  honeymoon
+  adventure
+}
