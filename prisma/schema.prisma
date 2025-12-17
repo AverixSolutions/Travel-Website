@@ -1,7 +1,8 @@
 // prisma/schema.prisma
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  provider   = "prisma-client-js"
+  output     = "../src/generated/prisma"
+  engineType = "binary"
 }
 
 datasource db {
@@ -22,27 +23,12 @@ model Package {
   isActive   Boolean         @default(true)
 
   coverImageUrl String?
-  gallery       PackageImage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([category, isActive])
   @@index([createdAt])
-}
-
-model PackageImage {
-  id        String  @id @default(cuid())
-  packageId String
-  url       String
-  publicId  String?
-  sortOrder Int     @default(0)
-
-  package Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@index([packageId, sortOrder])
 }
 
 enum PackageCategory {

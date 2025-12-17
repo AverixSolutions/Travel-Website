@@ -36,7 +36,6 @@ export async function PATCH(
   const updated = await prisma.package.update({
     where: { id },
     data,
-    include: { gallery: { orderBy: { sortOrder: "asc" } } },
   });
 
   revalidatePath("/packages");

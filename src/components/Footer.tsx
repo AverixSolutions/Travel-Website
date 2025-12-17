@@ -10,6 +10,7 @@ import {
   Youtube,
   MessageCircle,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -22,12 +23,16 @@ export default function Footer() {
           {/* Brand + Description */}
           <div className="lg:col-span-4">
             <div className="inline-block bg-white rounded-2xl p-4 shadow-lg">
-              <img
-                src="/MYSHA-LOGO.png"
-                alt="Mysha Tours & Travels"
-                className="h-12 sm:h-14 w-auto"
-                loading="lazy"
-              />
+              <div className="relative h-12 sm:h-14 w-[170px]">
+                <Image
+                  src="/MYSHA-LOGO.png"
+                  alt="Mysha Tours & Travels"
+                  fill
+                  className="object-contain"
+                  sizes="170px"
+                  priority={false}
+                />
+              </div>
             </div>
             <p className="mt-6 text-sm sm:text-base leading-relaxed text-white/90">
               Seamless, curated journeys—crafted for relaxation, exploration,

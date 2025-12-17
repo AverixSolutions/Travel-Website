@@ -82,7 +82,7 @@ export default function ContactSection() {
             Let’s Connect
           </h2>
           <p className="mt-3 text-base text-foreground/70 md:text-lg">
-            Reach us any time—our travel experts are available{" "}
+            Reach us any time our travel experts are available{" "}
             <span className="font-semibold text-accent">24×7</span> for queries,
             planning, or emergencies.
           </p>

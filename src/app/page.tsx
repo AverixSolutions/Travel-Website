@@ -1,4 +1,4 @@
-// src/app/page.tsx (or your Mainpage)
+// src/app/page.tsx
 import Navbar from "@/components/Navbar";
 import HeroVideo from "@/components/sections/HeroVideo";
 import Footer from "@/components/Footer";

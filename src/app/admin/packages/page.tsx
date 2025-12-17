@@ -21,6 +21,15 @@ import {
   Sparkles,
 } from "lucide-react";
 import Image from "next/image";
+import Pagination from "@/components/ui/Pagination";
+
+// Helper to generate URL-friendly slugs
+const slugify = (v: string) =>
+  v
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 
 const emptyForm = {
   title: "",
@@ -34,11 +43,6 @@ const emptyForm = {
   highlightsText: "",
   isActive: true,
   coverImageUrl: null as string | null,
-  gallery: [] as {
-    url: string;
-    publicId?: string | null;
-    sortOrder?: number;
-  }[],
 };
 
 export default function AdminPackagesPage() {
@@ -50,6 +54,19 @@ export default function AdminPackagesPage() {
   const [editing, setEditing] = useState<Package | null>(null);
   const [form, setForm] = useState({ ...emptyForm });
   const [uploading, setUploading] = useState(false);
+  const [slugTouched, setSlugTouched] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(9);
+
+  const categoryOptions: { value: PackageCategory; label: string }[] = [
+    { value: "international", label: "International" },
+    { value: "domestic", label: "Domestic" },
+    { value: "honeymoon", label: "Honeymoon" },
+    { value: "adventure", label: "Adventure" },
+  ];
+
+  const categoryLabel =
+    categoryOptions.find((o) => o.value === form.category)?.label ?? "Select";
 
   const filtered = useMemo(() => {
     const t = q.trim().toLowerCase();
@@ -61,6 +78,18 @@ export default function AdminPackagesPage() {
         p.slug.toLowerCase().includes(t)
     );
   }, [items, q]);
+
+  const total = filtered.length;
+
+  const paged = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, page, pageSize]);
+
+  useEffect(() => {
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    if (page > totalPages) setPage(totalPages);
+  }, [total, page, pageSize]);
 
   async function refresh() {
     setLoading(true);
@@ -79,6 +108,7 @@ export default function AdminPackagesPage() {
   const openCreate = () => {
     setEditing(null);
     setForm({ ...emptyForm });
+    setSlugTouched(false);
     setOpen(true);
   };
 
@@ -96,12 +126,8 @@ export default function AdminPackagesPage() {
       highlightsText: (pkg.highlights || []).join(", "),
       isActive: pkg.isActive,
       coverImageUrl: pkg.coverImageUrl ?? null,
-      gallery: (pkg.gallery || []).map((g) => ({
-        url: g.url,
-        publicId: g.publicId ?? null,
-        sortOrder: g.sortOrder,
-      })),
     });
+    setSlugTouched(true);
     setOpen(true);
   };
 
@@ -121,11 +147,6 @@ export default function AdminPackagesPage() {
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
-      gallery: form.gallery.map((g, i) => ({
-        url: g.url,
-        publicId: g.publicId ?? null,
-        sortOrder: g.sortOrder ?? i,
-      })),
     };
 
     if (!payload.title || !payload.slug || !payload.location) {
@@ -168,23 +189,6 @@ export default function AdminPackagesPage() {
     }
   };
 
-  const onAddGallery = async (file: File) => {
-    setUploading(true);
-    try {
-      const token = localStorage.getItem("admin_token") || "";
-      const up = await uploadToCloudinary(file, token);
-      setForm((s) => ({
-        ...s,
-        gallery: [
-          ...s.gallery,
-          { url: up.url, publicId: up.publicId, sortOrder: s.gallery.length },
-        ],
-      }));
-    } finally {
-      setUploading(false);
-    }
-  };
-
   return (
     <>
       <AdminTopbar />
@@ -205,7 +209,7 @@ export default function AdminPackagesPage() {
 
             <button
               onClick={openCreate}
-              className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-accent-3 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-brand/30 hover:shadow-xl hover:shadow-brand/40 transition-all hover:scale-[1.02]"
+              className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-accent-3 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-brand/30 hover:shadow-xl hover:shadow-brand/40 transition-all hover:scale-[1.02] cursor-pointer"
             >
               <Plus className="w-5 h-5" />
               New Package
@@ -215,26 +219,25 @@ export default function AdminPackagesPage() {
           {/* Search and Stats */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
             <div className="sm:col-span-2 lg:col-span-3 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/40" />
+              <Search className="absolute left-4 top-1/2 translate-y-[-10px] md:translate-y-[-20px] w-5 h-5 text-foreground/40 pointer-events-none" />
               <input
                 value={q}
-                onChange={(e) => setQ(e.target.value)}
+                onChange={(e) => {
+                  setQ(e.target.value);
+                  setPage(1);
+                }}
                 placeholder="Search by title, location, or slug..."
-                className="w-full rounded-xl border border-border bg-white pl-12 pr-4 py-3.5 outline-none focus:ring-4 focus:ring-brand/20 focus:border-brand transition-all"
+                className="w-full h-12 rounded-xl border border-border bg-white pl-12 pr-4 text-sm leading-normal outline-none focus:ring-4 focus:ring-brand/20 focus:border-brand transition-all"
               />
             </div>
-            <div className="rounded-xl border border-border bg-gradient-to-br from-brand/5 to-accent/5 p-4 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-foreground/60">
-                  Total
-                </p>
-                <p className="text-2xl font-black text-brand">
-                  {filtered.length}
-                </p>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-brand" />
-              </div>
+
+            <div className="h-12 rounded-xl border border-border bg-gradient-to-br from-brand/5 to-accent/5 px-4 flex items-center justify-between">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-foreground/60">
+                Total
+              </p>
+              <p className="text-base font-black text-brand">
+                {filtered.length}
+              </p>
             </div>
           </div>
 
@@ -260,99 +263,111 @@ export default function AdminPackagesPage() {
               </p>
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((p) => (
-                <div
-                  key={p.id}
-                  className="group overflow-hidden rounded-2xl border border-border bg-white shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                >
-                  <div className="aspect-[16/10] bg-muted relative overflow-hidden">
-                    <Image
-                      src={
-                        p.coverImageUrl ||
-                        p.gallery?.[0]?.url ||
-                        "/placeholders/swiz-image.jpg"
-                      }
-                      alt={p.title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute top-3 right-3">
-                      <span
-                        className={`rounded-full px-3 py-1.5 text-xs font-bold backdrop-blur-sm ${
-                          p.isActive
-                            ? "bg-green-500/90 text-white"
-                            : "bg-yellow-500/90 text-white"
-                        }`}
-                      >
-                        {p.isActive ? "LIVE" : "DRAFT"}
-                      </span>
-                    </div>
-                    <div className="absolute top-3 left-3">
-                      <span className="rounded-full bg-brand/90 backdrop-blur-sm px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white">
-                        {p.category}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-5">
-                    <h3 className="text-xl font-black text-foreground line-clamp-1 mb-2">
-                      {p.title}
-                    </h3>
-
-                    <div className="flex items-center gap-2 text-sm text-foreground/60 mb-4">
-                      <MapPin className="w-4 h-4" />
-                      <span className="line-clamp-1">{p.location}</span>
-                    </div>
-
-                    <div className="flex items-center gap-4 mb-4 text-sm">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="w-4 h-4 text-accent" />
-                        <span className="font-semibold">
-                          {p.days}D/{p.nights}N
+            <>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {paged.map((p) => (
+                  <div
+                    key={p.id}
+                    className="group overflow-hidden rounded-2xl border border-border bg-white shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <div className="aspect-[16/10] bg-muted relative overflow-hidden">
+                      <Image
+                        src={p.coverImageUrl || "/placeholders/swiz-image.jpg"}
+                        alt={p.title}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute top-3 right-3">
+                        <span
+                          className={`rounded-full px-3 py-1.5 text-xs font-bold backdrop-blur-sm ${
+                            p.isActive
+                              ? "bg-green-500/90 text-white"
+                              : "bg-yellow-500/90 text-white"
+                          }`}
+                        >
+                          {p.isActive ? "LIVE" : "DRAFT"}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <DollarSign className="w-4 h-4 text-accent" />
-                        <span className="text-xl font-black text-brand">
-                          ₹{p.price.toLocaleString("en-IN")}
+                      <div className="absolute top-3 left-3">
+                        <span className="rounded-full bg-brand/90 backdrop-blur-sm px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white">
+                          {p.category}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex gap-2 pt-4 border-t border-border">
-                      <button
-                        onClick={() => openEdit(p)}
-                        className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-brand/5 hover:bg-brand/10 px-4 py-2.5 text-sm font-bold text-brand transition-all"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => remove(p.id)}
-                        className="flex items-center justify-center gap-2 rounded-xl bg-red-50 hover:bg-red-100 px-4 py-2.5 text-sm font-bold text-red-600 transition-all"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                    <div className="p-5">
+                      <h3 className="text-xl font-black text-foreground line-clamp-1 mb-2">
+                        {p.title}
+                      </h3>
+
+                      <div className="flex items-center gap-2 text-sm text-foreground/60 mb-4">
+                        <MapPin className="w-4 h-4" />
+                        <span className="line-clamp-1">{p.location}</span>
+                      </div>
+
+                      <div className="flex items-center gap-4 mb-4 text-sm">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="w-4 h-4 text-accent" />
+                          <span className="font-semibold">
+                            {p.days}D/{p.nights}N
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <DollarSign className="w-4 h-4 text-accent" />
+                          <span className="text-xl font-black text-brand">
+                            ₹{p.price.toLocaleString("en-IN")}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 pt-4 border-t border-border">
+                        <button
+                          onClick={() => openEdit(p)}
+                          className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-brand/5 hover:bg-brand/10 px-4 py-2.5 text-sm font-bold text-brand transition-all"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => remove(p.id)}
+                          className="flex items-center justify-center gap-2 rounded-xl bg-red-50 hover:bg-red-100 px-4 py-2.5 text-sm font-bold text-red-600 transition-all"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+              {/* PAGINATION */}
+              <div className="mt-6 rounded-2xl border border-border bg-white p-4">
+                <Pagination
+                  page={page}
+                  pageSize={pageSize}
+                  total={total}
+                  onPageChange={setPage}
+                  onPageSizeChange={(n) => {
+                    setPageSize(n);
+                    setPage(1);
+                  }}
+                />
+              </div>
+            </>
           )}
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Enhanced Modal with Sticky Header/Footer */}
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-4 sm:items-center backdrop-blur-sm"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={(e) => {
             if (e.target === e.currentTarget) setOpen(false);
           }}
         >
-          <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-300">
-            <div className="sticky top-0 z-10 bg-gradient-to-r from-brand to-accent-3 p-6 rounded-t-3xl">
+          <div className="w-full max-w-3xl h-[90vh] flex flex-col rounded-3xl bg-white shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-300">
+            {/* Sticky Header */}
+            <div className="flex-shrink-0 bg-gradient-to-r from-brand to-accent-3 px-6 py-5 rounded-t-3xl">
               <div className="flex items-start justify-between gap-4">
                 <div className="text-white">
                   <h2 className="text-2xl font-black">
@@ -360,41 +375,57 @@ export default function AdminPackagesPage() {
                   </h2>
                   <p className="text-white/80 text-sm mt-1">
                     {editing
-                      ? "Update package details and images"
+                      ? "Update package details and image"
                       : "Add a new travel package to your catalog"}
                   </p>
                 </div>
                 <button
                   onClick={() => setOpen(false)}
-                  className="rounded-full bg-white/20 hover:bg-white/30 p-2 text-white transition-all"
+                  className="rounded-full bg-white/20 hover:bg-white/30 p-2 text-white transition-all flex-shrink-0"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
             </div>
 
-            <div className="p-6">
-              <div className="grid gap-6 sm:grid-cols-2">
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto px-6 py-6 no-scrollbar">
+              <div className="grid gap-5 sm:grid-cols-2">
                 <Field
                   label="Package Title"
                   icon={<Sparkles className="w-4 h-4" />}
+                  hint="Give your package an exciting name"
                 >
                   <input
                     value={form.title}
-                    onChange={(e) =>
-                      setForm((s) => ({ ...s, title: e.target.value }))
-                    }
+                    onChange={(e) => {
+                      const title = e.target.value;
+                      setForm((s) => ({
+                        ...s,
+                        title,
+                        slug: slugTouched ? s.slug : slugify(title),
+                      }));
+                    }}
                     placeholder="e.g., Magical Switzerland Tour"
                     className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 outline-none focus:ring-4 focus:ring-brand/20 focus:border-brand transition-all"
                   />
                 </Field>
 
-                <Field label="URL Slug" icon={<Sparkles className="w-4 h-4" />}>
+                <Field
+                  label="URL Slug"
+                  icon={<Sparkles className="w-4 h-4" />}
+                  hint={
+                    slugTouched
+                      ? "Custom slug locked"
+                      : "Auto-generated from title"
+                  }
+                >
                   <input
                     value={form.slug}
-                    onChange={(e) =>
-                      setForm((s) => ({ ...s, slug: e.target.value }))
-                    }
+                    onChange={(e) => {
+                      setSlugTouched(true);
+                      setForm((s) => ({ ...s, slug: slugify(e.target.value) }));
+                    }}
                     placeholder="magical-switzerland-tour"
                     className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 outline-none focus:ring-4 focus:ring-brand/20 focus:border-brand transition-all"
                   />
@@ -412,26 +443,18 @@ export default function AdminPackagesPage() {
                 </Field>
 
                 <Field label="Category" icon={<Sparkles className="w-4 h-4" />}>
-                  <select
+                  <DropdownSelect
                     value={form.category}
-                    onChange={(e) =>
-                      setForm((s) => ({
-                        ...s,
-                        category: e.target.value as any,
-                      }))
-                    }
-                    className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 outline-none focus:ring-4 focus:ring-brand/20 focus:border-brand transition-all"
-                  >
-                    <option value="international">International</option>
-                    <option value="domestic">Domestic</option>
-                    <option value="honeymoon">Honeymoon</option>
-                    <option value="adventure">Adventure</option>
-                  </select>
+                    label={categoryLabel}
+                    options={categoryOptions}
+                    onChange={(v) => setForm((s) => ({ ...s, category: v }))}
+                  />
                 </Field>
 
-                <Field label="Days">
+                <Field label="Days" icon={<Calendar className="w-4 h-4" />}>
                   <input
                     type="number"
+                    min="1"
                     value={form.days}
                     onChange={(e) =>
                       setForm((s) => ({ ...s, days: Number(e.target.value) }))
@@ -440,12 +463,16 @@ export default function AdminPackagesPage() {
                   />
                 </Field>
 
-                <Field label="Nights">
+                <Field label="Nights" icon={<Calendar className="w-4 h-4" />}>
                   <input
                     type="number"
+                    min="0"
                     value={form.nights}
                     onChange={(e) =>
-                      setForm((s) => ({ ...s, nights: Number(e.target.value) }))
+                      setForm((s) => ({
+                        ...s,
+                        nights: Number(e.target.value),
+                      }))
                     }
                     className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 outline-none focus:ring-4 focus:ring-brand/20 focus:border-brand transition-all"
                   />
@@ -457,9 +484,13 @@ export default function AdminPackagesPage() {
                 >
                   <input
                     type="number"
+                    min="0"
                     value={form.price}
                     onChange={(e) =>
-                      setForm((s) => ({ ...s, price: Number(e.target.value) }))
+                      setForm((s) => ({
+                        ...s,
+                        price: Number(e.target.value),
+                      }))
                     }
                     placeholder="50000"
                     className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 outline-none focus:ring-4 focus:ring-brand/20 focus:border-brand transition-all"
@@ -477,26 +508,34 @@ export default function AdminPackagesPage() {
                   />
                 </Field>
 
-                <Field label="Highlights (comma separated)" full>
-                  <input
+                <Field
+                  label="Highlights (comma separated)"
+                  full
+                  hint="Separate each highlight with a comma"
+                >
+                  <textarea
                     value={form.highlightsText}
                     onChange={(e) =>
-                      setForm((s) => ({ ...s, highlightsText: e.target.value }))
+                      setForm((s) => ({
+                        ...s,
+                        highlightsText: e.target.value,
+                      }))
                     }
                     placeholder="Eiffel Tower, Swiss Alps, Lake Geneva"
-                    className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 outline-none focus:ring-4 focus:ring-brand/20 focus:border-brand transition-all"
+                    rows={3}
+                    className="w-full rounded-xl border border-border bg-muted/50 px-4 py-3 outline-none focus:ring-4 focus:ring-brand/20 focus:border-brand transition-all resize-none"
                   />
                 </Field>
 
                 <Field label="Visibility" full>
-                  <label className="flex items-center gap-3 p-4 rounded-xl border border-border bg-muted/50 cursor-pointer hover:bg-muted transition-all">
+                  <label className="flex items-center gap-3 p-4 rounded-xl border border-border bg-muted/50 cursor-pointer hover:bg-muted transition-all group">
                     <input
                       type="checkbox"
                       checked={form.isActive}
                       onChange={(e) =>
                         setForm((s) => ({ ...s, isActive: e.target.checked }))
                       }
-                      className="w-5 h-5 rounded accent-brand"
+                      className="w-5 h-5 rounded accent-brand cursor-pointer"
                     />
                     <div className="flex items-center gap-2">
                       {form.isActive ? (
@@ -519,85 +558,56 @@ export default function AdminPackagesPage() {
                 </Field>
 
                 <Field label="Cover Image" full>
-                  <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                    <div className="relative w-32 h-24 rounded-xl overflow-hidden border-2 border-border">
-                      <Image
-                        src={
-                          form.coverImageUrl || "/placeholders/swiz-image.jpg"
+                  {form.coverImageUrl && (
+                    <div className="mb-3 relative group">
+                      <div className="relative w-full h-48 rounded-xl overflow-hidden border-2 border-brand/20">
+                        <Image
+                          src={form.coverImageUrl}
+                          alt="Cover"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setForm((s) => ({ ...s, coverImageUrl: null }))
                         }
-                        alt="Cover"
-                        fill
-                        className="object-cover"
-                      />
+                        className="absolute -right-2 -top-2 rounded-full bg-red-500 p-2 text-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
                     </div>
-                    <label className="flex-1 cursor-pointer">
-                      <div className="flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-brand/30 bg-brand/5 hover:bg-brand/10 px-6 py-4 transition-all">
-                        <Upload className="w-5 h-5 text-brand" />
-                        <span className="text-sm font-bold text-brand">
-                          {uploading ? "Uploading..." : "Upload Cover Image"}
-                        </span>
-                      </div>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        disabled={uploading}
-                        onChange={(e) => {
-                          const f = e.target.files?.[0];
-                          if (f) onUploadCover(f);
-                        }}
-                      />
-                    </label>
-                  </div>
-                </Field>
-
-                <Field label="Gallery Images" full>
-                  <div className="flex flex-wrap gap-3">
-                    {form.gallery.map((g, idx) => (
-                      <div key={idx} className="relative group">
-                        <div className="relative w-28 h-20 rounded-xl overflow-hidden border-2 border-border">
-                          <Image
-                            src={g.url}
-                            alt={`Gallery ${idx + 1}`}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setForm((s) => ({
-                              ...s,
-                              gallery: s.gallery.filter((_, i) => i !== idx),
-                            }))
-                          }
-                          className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1.5 text-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
-
-                    <label className="cursor-pointer">
-                      <div className="flex items-center justify-center w-28 h-20 rounded-xl border-2 border-dashed border-brand/30 bg-brand/5 hover:bg-brand/10 transition-all">
-                        <Plus className="w-6 h-6 text-brand" />
-                      </div>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        disabled={uploading}
-                        onChange={(e) => {
-                          const f = e.target.files?.[0];
-                          if (f) onAddGallery(f);
-                        }}
-                      />
-                    </label>
-                  </div>
+                  )}
+                  <label className="block cursor-pointer">
+                    <div className="flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-brand/30 bg-brand/5 hover:bg-brand/10 px-6 py-4 transition-all">
+                      <Upload className="w-5 h-5 text-brand" />
+                      <span className="text-sm font-bold text-brand">
+                        {uploading
+                          ? "Uploading..."
+                          : form.coverImageUrl
+                          ? "Change Cover Image"
+                          : "Upload Cover Image"}
+                      </span>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      disabled={uploading}
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) onUploadCover(f);
+                      }}
+                    />
+                  </label>
                 </Field>
               </div>
+            </div>
 
-              <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:justify-end">
+            {/* Sticky Footer */}
+            <div className="flex-shrink-0 border-t border-border bg-muted/30 px-6 py-4 rounded-b-3xl">
+              <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
                 <button
                   onClick={() => setOpen(false)}
                   className="rounded-xl border-2 border-border bg-white px-6 py-3 text-sm font-bold hover:bg-muted transition-all"
@@ -629,11 +639,13 @@ function Field({
   children,
   full,
   icon,
+  hint,
 }: {
   label: string;
   children: React.ReactNode;
   full?: boolean;
   icon?: React.ReactNode;
+  hint?: string;
 }) {
   return (
     <div className={full ? "sm:col-span-2" : ""}>
@@ -641,6 +653,7 @@ function Field({
         {icon}
         {label}
       </label>
+      {hint && <p className="text-xs text-foreground/50 mb-2 italic">{hint}</p>}
       {children}
     </div>
   );
@@ -662,6 +675,64 @@ function PackageSkeleton() {
           <div className="h-10 w-16 bg-muted rounded-xl"></div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function DropdownSelect<T extends string>({
+  value,
+  label,
+  options,
+  onChange,
+}: {
+  value: T;
+  label: string;
+  options: { value: T; label: string }[];
+  onChange: (v: T) => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((s) => !s)}
+        className="w-full h-11 rounded-xl border border-border bg-muted/50 px-4 text-left text-sm font-semibold outline-none focus:ring-4 focus:ring-brand/20 focus:border-brand transition-all flex items-center justify-between"
+      >
+        <span className="text-foreground">{label}</span>
+        <span className="text-foreground/50">▾</span>
+      </button>
+
+      {/* Click-outside overlay */}
+      {open && (
+        <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+      )}
+
+      {/* Dropdown */}
+      {open && (
+        <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-xl border border-border bg-white shadow-xl">
+          {options.map((o) => {
+            const active = o.value === value;
+            return (
+              <button
+                key={o.value}
+                type="button"
+                onClick={() => {
+                  onChange(o.value);
+                  setOpen(false);
+                }}
+                className={`w-full px-4 py-3 text-left text-sm font-semibold transition-all ${
+                  active
+                    ? "bg-brand/10 text-brand"
+                    : "hover:bg-muted text-foreground"
+                }`}
+              >
+                {o.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

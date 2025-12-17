@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import SplashGate from "@/components/ui/SplashGate";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -107,7 +108,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-dvh`}
       >
-        {children}
+        <SplashGate>{children}</SplashGate>
 
         {/* JSON-LD for rich results */}
         <script

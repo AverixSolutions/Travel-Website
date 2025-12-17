@@ -3,21 +3,33 @@
 
 import { getAdminToken } from "./adminClientAuth";
 
-export async function adminApi<T>(
+export async function adminApi<T = unknown>(
   path: string,
   opts: RequestInit = {}
 ): Promise<T> {
   const token = getAdminToken();
   if (!token) throw new Error("Missing admin token. Please login again.");
 
+  const isForm = opts.body instanceof FormData;
+
+  const baseHeaders: Record<string, string> = {
+    "x-admin-token": token,
+  };
+
+  if (!isForm) {
+    baseHeaders["content-type"] = "application/json";
+  }
+
+  const mergedHeaders: HeadersInit = {
+    ...baseHeaders,
+    ...(opts.headers instanceof Headers
+      ? Object.fromEntries(opts.headers.entries())
+      : (opts.headers as Record<string, string> | undefined)),
+  };
+
   const res = await fetch(path, {
     ...opts,
-    headers: {
-      ...(opts.headers || {}),
-      "x-admin-token": token,
-      "content-type":
-        opts.body instanceof FormData ? undefined : "application/json",
-    } as any,
+    headers: mergedHeaders,
     cache: "no-store",
   });
 
@@ -26,5 +38,5 @@ export async function adminApi<T>(
     throw new Error(text || `Request failed: ${res.status}`);
   }
 
-  return res.json();
+  return (await res.json()) as T;
 }

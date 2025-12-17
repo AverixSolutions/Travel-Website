@@ -17,15 +17,6 @@ const CreateSchema = z.object({
   highlights: z.array(z.string().min(1)).default([]),
   isActive: z.boolean().default(true),
   coverImageUrl: z.string().url().optional().nullable(),
-  gallery: z
-    .array(
-      z.object({
-        url: z.string().url(),
-        publicId: z.string().optional().nullable(),
-        sortOrder: z.number().int().optional(),
-      })
-    )
-    .default([]),
 });
 
 export async function POST(req: NextRequest) {
@@ -37,17 +28,7 @@ export async function POST(req: NextRequest) {
   const data = CreateSchema.parse(json);
 
   const created = await prisma.package.create({
-    data: {
-      ...data,
-      gallery: {
-        create: data.gallery.map((g, i) => ({
-          url: g.url,
-          publicId: g.publicId ?? null,
-          sortOrder: g.sortOrder ?? i,
-        })),
-      },
-    },
-    include: { gallery: { orderBy: { sortOrder: "asc" } } },
+    data,
   });
 
   revalidatePath("/packages");
@@ -62,7 +43,6 @@ export async function GET(req: NextRequest) {
 
   const items = await prisma.package.findMany({
     orderBy: { createdAt: "desc" },
-    include: { gallery: { orderBy: { sortOrder: "asc" } } },
   });
   return NextResponse.json({ items });
 }
